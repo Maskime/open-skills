@@ -1,0 +1,22 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" id="PTC_Logomark" data-name="PTC Logomark" xmlns="http://www.w3.org/2000/svg" width="97.845" height="121.579" viewBox="0 0 97.845 121.579">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #25b3c3;
+      }
+
+      .cls-2 {
+        fill: #f04;
+      }
+
+      .cls-3 {
+        fill: #250044;
+      }
+    </style>
+  </defs>
+  <g id="Group_1" data-name="Group 1">
+    <path id="Path_1" data-name="Path 1" class="cls-1" d="M115.649,65.251a40.8,40.8,0,0,1-57.36,37.02,36.152,36.152,0,0,0,.279-4.6V28.115a40.827,40.827,0,0,1,57.081,37.136Z" transform="translate(-17.804 -16.624)"/>
+    <path id="Path_2" data-name="Path 2" class="cls-2" d="M58.029,70.026a40.518,40.518,0,0,0,24.189,37.02,40.646,40.646,0,0,1-40.485,35.933V61.934A40.649,40.649,0,0,1,82.5,21.4V32.89A40.5,40.5,0,0,0,58.029,70.026Z" transform="translate(-41.733 -21.4)"/>
+  </g>
+  <path id="Path_26" data-name="Path 26" class="cls-3" d="M72.865,26.128V95.683a36.153,36.153,0,0,1-.279,4.6,40.419,40.419,0,0,1,.279-74.156Z" transform="translate(-32.101 -14.638)"/>
+</svg>

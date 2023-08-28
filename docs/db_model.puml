@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity User {
+ id: generated
+ --
+ name: string
+ first_name: string
+ email: string
+ password: hash
+}
+
+entity Experience {
+ id: generated
+ --
+ company_id: <<FK>>
+ user_id: <<FK>>
+ --
+ position: string
+ description: string
+ team_description: string
+ start_date: date
+ end_date: date
+ is_current: bool
+}
+
+entity Task {
+  id: generated
+  --
+  experience_id: <<FK>>
+  --
+  description: string
+}
+
+entity Technology {
+  id: generated
+  --
+  name: string
+}
+
+entity Company {
+  id: generated
+  name: string
+}
+
+entity user_company {
+  user_id: <<FK>>
+  company_id: <<FK>>
+}
+
+entity experience_technology {
+  expererience_id: <<FK>>
+  technology_id: <<FK>>
+}
+
+entity user_technology {
+  user_id: <<FK>>
+  technology_id: <<FK>>
+}
+
+User -- user_company
+Company -- user_company
+User -- Experience
+Company -- Experience
+Experience -- Task
+Experience -- experience_technology
+Technology -- experience_technology
+User -- user_technology
+Technology -- user_technology
+@enduml
