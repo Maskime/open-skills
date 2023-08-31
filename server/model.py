@@ -1,5 +1,7 @@
+from typing import Optional
+
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -31,6 +33,15 @@ class User(db.Model):
         super().__init__()
         self.email = email
         self.password = generate_password_hash(password, method='sha256')
+
+    @classmethod
+    def authenticate(cls, email: str, password: str) -> Optional['User']:
+        if not email or not password:
+            return None
+        user = cls.query.filter_by(email=email).first()
+        if not user or not check_password_hash(user.password, password):
+            return None
+        return user
 
 
 class Company(db.Model):

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
-import {Ref, ref} from "vue";
+import {type Ref, ref} from "vue";
 import Alert from "@/components/Alert.vue";
-import {UserResponse, useUserStore} from "@/stores/userStore";
+import {type Login, RegisterResponse, useUserStore} from "@/stores/userStore";
+import {useAlertStore} from "@/stores/alertStore";
+import {useRouter} from "vue-router";
 
 
 const userStore = useUserStore();
+const alertStore = useAlertStore();
+const router = useRouter();
 
 interface LoginForm {
   email: string;
@@ -36,16 +40,27 @@ const registerForm: Ref<UserRegisterForm> = ref({
 
 const registerClose = ref(null);
 
-const showAlert = ref(false);
-const alertMessage = ref<Alert>({
-  level: 'info',
-  msg: '',
-  errors: []
-});
-
 function handleLogin() {
-  //userStore.login(loginForm.value)
+  let loginPayload: Login = {
+    email: loginForm.value.email,
+    password: loginForm.value.password
+  };
   console.log(loginForm)
+  userStore.login(loginPayload, handleLoginSuccess, handleLoginFailed);
+}
+
+function handleLoginSuccess(response: RegisterResponse) {
+  console.log(response);
+  alertStore.showSuccess('Successful login');
+  setTimeout(() => {
+    router.push({name: 'home'});
+  }, 1000);
+
+}
+
+function handleLoginFailed(response: RegisterResponse) {
+  console.error(response);
+  alertStore.showError(response.message, response.errors);
 }
 
 function initRegisterForm() {
@@ -66,20 +81,15 @@ function handleRegister() {
 
 }
 
-function handleUserCreateFailed(response: UserResponse) {
-  showAlert.value = true;
-  alertMessage.value.msg = response.message;
-  alertMessage.value.level = 'danger';
-  alertMessage.value.errors = response.errors;
+function handleUserCreateFailed(response: RegisterResponse) {
+  alertStore.showError(response.message, response.errors);
 }
 
-function handleUserCreateSuccess(response: UserResponse) {
+function handleUserCreateSuccess(response: RegisterResponse) {
   initRegisterForm();
-  showAlert.value = true;
-  alertMessage.value.msg = response.message;
-  alertMessage.value.level = 'success';
+  alertStore.showSuccess(response.message);
   setTimeout(() => {
-    handleClose();
+    alertStore.clearAll();
     if (registerClose.value != null) {
       registerClose.value.click();
     }
@@ -87,9 +97,7 @@ function handleUserCreateSuccess(response: UserResponse) {
 }
 
 function handleClose() {
-  showAlert.value = false;
-  alertMessage.value.msg = '';
-  alertMessage.value.level = 'info';
+  alertStore.clearAll();
 }
 </script>
 
@@ -97,16 +105,19 @@ function handleClose() {
 
   <div class="d-flex align-items-center py-4 bg-body-tertiary">
     <main class="form-signin w-100 m-auto">
+      <alert></alert>
       <form>
         <img class="mb-4" src="../assets/ptc.svg" alt="" height="57">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
         <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                 v-model="loginForm.email">
           <label for="floatingInput">Email address</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                 v-model="loginForm.password">
           <label for="floatingPassword">Password</label>
         </div>
 
@@ -116,7 +127,7 @@ function handleClose() {
             Remember me
           </label>
         </div>
-        <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+        <button class="btn btn-primary w-100 py-2" type="button" @click="handleLogin">Sign in</button>
         <p class="mt-5 mb-3 text-body-secondary">
           <a href="#" data-bs-toggle="modal" data-bs-target="#modalSignin">Register</a>
         </p>
@@ -135,9 +146,7 @@ function handleClose() {
         </div>
         <div class="modal-body p-5 pt-0">
           <form class="">
-            <div v-if="showAlert" class="form-floating mb-3">
-              <alert v-bind="alertMessage"></alert>
-            </div>
+            <alert></alert>
             <div class="form-floating mb-3">
               <input v-model="registerForm.email" type="email" class="form-control rounded-3" id="floatingInput"
                      placeholder="name@example.com">

@@ -1,23 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Ping from "@/components/Ping.vue";
-import Books from '@/components/Books.vue';
+
 import Login from "@/views/Login.vue";
 import RegisterUser from "@/views/RegisterUser.vue";
+import Home from "@/views/Home.vue";
+import {useUserStore} from "@/stores/userStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/ping',
-      name: 'ping',
-      component: Ping
-    },
-    {
-      path: '/books',
-      name: 'books',
-      component: Books
-    },
     {
       path: '/login',
       name: 'login',
@@ -27,6 +18,19 @@ const router = createRouter({
       path: '/users/register',
       name: 'users_register',
       component: RegisterUser
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: Home,
+      beforeEnter(to, from, next){
+        const userStore = useUserStore();
+        if(!userStore.isAuthenticated()){
+          next('/login');
+        } else {
+          next();
+        }
+      }
     }
   ]
 })

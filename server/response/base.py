@@ -1,7 +1,9 @@
 from enum import Enum, unique
-from typing import List
+from typing import List, Any, Dict
 
 from flask import jsonify
+
+from server.model import User
 
 
 @unique
@@ -17,7 +19,7 @@ class Response:
         self.exception: Exception = None
         self.errors: List[str] = None
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         dicted = {'status': self.status.value, 'message': self.message, 'exception': None}
         if self.exception:
             dicted['exception'] = f'{self.exception}'
@@ -52,4 +54,28 @@ class Response:
         response = Response()
         response.status = ResponseStatus.OK
         response.message = message
+        return response
+
+
+class AuthenticationResponse(Response):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.token: str = ''
+        self.is_authenticated: bool = False
+        self.user_email: str = ''
+
+    def to_dict(self) -> Dict[str, Any]:
+        dicted = super().to_dict()
+        dicted['token'] = self.token
+        dicted['is_authenticated'] = self.is_authenticated
+        dicted['user_email'] = self.user_email
+        return dicted
+
+    @classmethod
+    def authentication_ok(cls, user: User, token: str) -> 'AuthenticationResponse':
+        response = AuthenticationResponse()
+        response.status = ResponseStatus.OK
+        response.token = token
+        response.user_email = user.email
         return response

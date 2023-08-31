@@ -1,7 +1,7 @@
 from typing import Type, Callable, Dict, List, Set, Any
 
 from server.model import User
-from server.request.request_user import RequestUserCreate
+from server.request.request_user import RequestUserCreate, RequestUserAuthenticate
 
 
 class TypeMapper:
@@ -35,12 +35,21 @@ def get_class_attributes(obj: Any) -> Set[str]:
     return attrs_cache[curr_type]
 
 
-def convert_dict_requestusercreate(request: dict) -> RequestUserCreate:
+def check_dict_class(request: dict, obj) -> List[str]:
     dict_keys = set(request.keys())
-    cls_attrs = get_class_attributes(RequestUserCreate())
+    cls_attrs = get_class_attributes(obj)
+    errors = []
     for cls_attr in cls_attrs:
         if cls_attr not in dict_keys:
-            raise ValueError(f'Missing [{cls_attr}] in dict for conversion')
+            errors.append(f'Missing [{cls_attr}] in dict for conversion')
+    return errors
+
+
+def convert_dict_requestusercreate(request: dict) -> RequestUserCreate:
+    request['first_name'] = request.pop('firstName')
+    errors = check_dict_class(request, RequestUserCreate())
+    if len(errors):
+        raise ValueError('\n'.join(errors))
     result = RequestUserCreate()
     result.name = request['name']
     result.email = request['email']
@@ -56,5 +65,16 @@ def convert_requestusercreate_user(request: RequestUserCreate) -> User:
     return user
 
 
+def convert_dict_requestuserauthenticate(request: dict) -> RequestUserAuthenticate:
+    errors = check_dict_class(request, RequestUserAuthenticate())
+    if len(errors):
+        raise ValueError('\n'.join(errors))
+    result = RequestUserAuthenticate()
+    result.email = request['email']
+    result.password = request['password']
+    return result
+
+
 converter.add_conversion(RequestUserCreate, User, convert_requestusercreate_user)
 converter.add_conversion(dict, RequestUserCreate, convert_dict_requestusercreate)
+converter.add_conversion(dict, RequestUserAuthenticate, convert_dict_requestuserauthenticate)
