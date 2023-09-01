@@ -47,7 +47,7 @@ def token_required(f):
             return Response.error_response('Invalid authentication headers').to_flask(401)
         try:
             token = auth_headers[1]
-            data = jwt.decode(token, app.config['SECRET_KEY'])
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
             user = User.query.filter_by(email=data['sub']).first()
             if not user:
                 return Response.error_response('Invalid authentication').to_flask(401)
@@ -90,13 +90,16 @@ def user_authenticate():
         'sub': user_db.email,
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)
-    }, app.config['SECRET_KEY'])
+    }, app.config['SECRET_KEY'], algorithm='HS256')
     return AuthenticationResponse.authentication_ok(user_db, token).to_flask()
 
-@app.route('/experiences/create', methods=['POST'])
+@app.route('/experiences/audiorecord', methods=['POST'])
 @token_required
-def experience_create():
-    pass
+def experience_audiorecord(user):
+    if 'file' not in request.files:
+        return Response.error_response('No file part in the request').to_flask()
+    file = request.files['file']
+    return Response.ok_response('File uploaded').to_flask()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,8 @@
 import {defineStore} from "pinia";
 import axios from "axios";
 import {type Ref, ref} from "vue";
+import {config} from "@/config";
+import {ResponseBase} from "@/stores/common";
 
 interface User {
     name: string;
@@ -14,11 +16,7 @@ export interface Login {
     password: string;
 }
 
-class ResponseBase {
-    isError: boolean = false;
-    message: string = '';
-    errors: string[] = [];
-}
+
 
 export class RegisterResponse extends ResponseBase {
 }
@@ -32,7 +30,7 @@ export class LoginResponse extends ResponseBase {
 type RegisterCallback = (response: RegisterResponse) => void;
 type LoginCallback = (response: LoginResponse) => void;
 
-const path = 'http://localhost:5000/';
+const path = config.apiUrl;
 
 export const useUserStore = defineStore('user', () => {
 
@@ -97,5 +95,18 @@ export const useUserStore = defineStore('user', () => {
         return authentToken.value !== '';
     }
 
-    return {createUser, login, authentEmail, authentToken, isAuthenticated};
+    function logout():void{
+        authentEmail.value = '';
+        authentToken.value = '';
+    }
+
+    function addAuthenticationHeader(header: {[name: string]: string}): boolean{
+        if(!isAuthenticated()){
+            return false;
+        }
+        header['Authorization'] = `Bearer ${authentToken.value}`;
+        return true;
+    }
+
+    return {createUser, login, authentEmail, authentToken, isAuthenticated, logout, addAuthenticationHeader};
 });

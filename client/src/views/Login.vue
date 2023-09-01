@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 import {type Ref, ref} from "vue";
 import Alert from "@/components/Alert.vue";
 import {type Login, RegisterResponse, useUserStore} from "@/stores/userStore";
 import {useAlertStore} from "@/stores/alertStore";
 import {useRouter} from "vue-router";
+import {toast} from "vue3-toastify";
 
 
 const userStore = useUserStore();
@@ -50,12 +50,11 @@ function handleLogin() {
 }
 
 function handleLoginSuccess(response: RegisterResponse) {
-  console.log(response);
-  alertStore.showSuccess('Successful login');
-  setTimeout(() => {
-    router.push({name: 'home'});
-  }, 1000);
-
+  toast('Successful login, redirecting.', {
+    onClose: () => {
+      router.push({name: 'home'});
+    }
+  });
 }
 
 function handleLoginFailed(response: RegisterResponse) {
