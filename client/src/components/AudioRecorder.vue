@@ -3,19 +3,23 @@ import TapirWidget from 'vue-audio-tapir';
 import {useExperienceStore} from "@/stores/experienceStore";
 
 const experienceStore = useExperienceStore();
+const emit = defineEmits(['uploadSuccess', 'uploadFailed']);
+
 function uploadAudio(audioBlob): boolean {
-  experienceStore.uploadExperience(audioBlob, (response) =>{
-    console.log('All good')
-  }, (err) => {
-    console.log('Not all good');
-  });
+  experienceStore.uploadExperience(audioBlob,
+      (response) => {
+        emit('uploadSuccess', response.taskId);
+      },
+      (err) => {
+        emit('uploadFailed', err.message);
+      });
   return true;
 }
 </script>
 
 <template>
   <tapir-widget
-      :sampleRate="95000"
+      :sampleRate="48000"
       :time="3"
       :customUpload="uploadAudio"></tapir-widget>
 </template>

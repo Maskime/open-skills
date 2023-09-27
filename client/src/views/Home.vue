@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import Header from "@/components/Header.vue";
 import SideMenu from "@/components/SideMenu.vue";
-import Profile from "@/components/Profile.vue";
 import {ref, shallowRef} from "vue";
 import {useNavStore} from "@/stores/navStore";
 import Experiences from "@/components/Experiences.vue";
-import Technologies from "@/components/Technologies.vue";
 import Experience from "@/components/Experience.vue";
 
 const navStore = useNavStore();
 
 const components = {
-  'Profile': Profile,
   'Experiences': Experiences,
-  'Technologies': Technologies,
   'Experience': Experience
 }
 
-const currentComponent = shallowRef(Profile);
+const currentComponent = shallowRef(Experiences);
 navStore.$subscribe((mutation, state) => {
     currentComponent.value = components[state.currentComponent];
     console.log(`Switching to ${currentComponent.value}`);

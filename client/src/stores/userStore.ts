@@ -17,7 +17,6 @@ export interface Login {
 }
 
 
-
 export class RegisterResponse extends ResponseBase {
 }
 
@@ -39,19 +38,25 @@ export const useUserStore = defineStore('user', () => {
 
     function createResponseBaseError<T extends ResponseBase>(err: any, resp: T): T {
         console.error(err);
-        let errors: string[];
-        if (err.response.data.errors) {
-            errors = err.response.data.errors;
-        } else {
-            errors = [];
+        if("response" in err) {
+            let errors: string[];
+            if (err.response.data.errors) {
+                errors = err.response.data.errors;
+            } else {
+                errors = [];
+            }
+            if (err.response.data.exception) {
+                errors.push(err.response.data.exception);
+            }
+            let message: string = err.response.data.message;
+            resp.isError = true;
+            resp.message = message;
+            resp.errors = errors;
+            return resp;
         }
-        if (err.response.data.exception) {
-            errors.push(err.response.data.exception);
-        }
-        let message: string = err.response.data.message;
         resp.isError = true;
-        resp.message = message;
-        resp.errors = errors;
+        resp.message = `Une erreur technique est survenue : ${err.message}`;
+        resp.errors = [];
         return resp;
     }
 
@@ -91,22 +96,22 @@ export const useUserStore = defineStore('user', () => {
             });
     }
 
-    function isAuthenticated():boolean{
+    function isAuthenticated(): boolean {
         return authentToken.value !== '';
     }
 
-    function logout():void{
+    function logout(): void {
         authentEmail.value = '';
         authentToken.value = '';
     }
 
-    function addAuthenticationHeader(header: {[name: string]: string}): boolean{
-        if(!isAuthenticated()){
+    function addAuthenticationHeader(header: { [name: string]: string }): boolean {
+        if (!isAuthenticated()) {
             return false;
         }
         header['Authorization'] = `Bearer ${authentToken.value}`;
         return true;
     }
 
-    return {createUser, login, authentEmail, authentToken, isAuthenticated, logout, addAuthenticationHeader};
+return {createUser, login, authentEmail, authentToken, isAuthenticated, logout, addAuthenticationHeader};
 });

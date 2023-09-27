@@ -47,6 +47,7 @@ def check_dict_class(request: dict, obj) -> List[str]:
 
 def convert_dict_requestusercreate(request: dict) -> RequestUserCreate:
     request['first_name'] = request.pop('firstName')
+    request['email_consent'] = request.pop('emailConsent')
     errors = check_dict_class(request, RequestUserCreate())
     if len(errors):
         raise ValueError('\n'.join(errors))
@@ -55,6 +56,8 @@ def convert_dict_requestusercreate(request: dict) -> RequestUserCreate:
     result.email = request['email']
     result.first_name = request['first_name']
     result.password = request['password']
+    result.email_consent = request['email_consent']
+    result.enterprise = request['enterprise']
     return result
 
 

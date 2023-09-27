@@ -14,6 +14,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "pinia": "^2.1.6",
+    "socket.io-client": "^4.7.2",
     "vue": "^3.3.4",
     "vue-audio-tapir": "^1.5.0",
     "vue-router": "^4.2.4",

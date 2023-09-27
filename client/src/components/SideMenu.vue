@@ -20,29 +20,18 @@ const navStore = useNavStore();
 
 const menuItems: Ref<NavLink[]> = ref<NavLink[]>([]);
 
-menuItems.value.push({
-      label: 'Profile',
-      iconClass: 'bi-house',
-      isActive: false,
-      destComponent: 'Profile'
-    },
+menuItems.value.push(
     {
       label: 'Expériences',
       iconClass: 'bi-emoji-laughing',
       isActive: false,
       destComponent: 'Experiences'
-    },
-    {
-      label: 'Technologies',
-      iconClass: 'bi-cpu',
-      isActive: false,
-      destComponent: 'Technologies'
     }
 );
 
 function logout() {
   userStore.logout();
-  toast('Login out !', {
+  toast('Déconnexion !', {
     onClose: () => {
       router.push({name: 'login'});
     }
@@ -76,11 +65,6 @@ function changeComponent(destComponent:any){
         <hr class="my-3">
 
         <ul class="nav flex-column mb-auto">
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2 bi-gear-wide-connected" href="#">
-              Settings
-            </a>
-          </li>
           <li class="nav-item">
             <a class="nav-link d-flex align-items-center gap-2 bi-door-closed" href="#" @click="logout">
               Sign out

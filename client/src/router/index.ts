@@ -2,22 +2,22 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 
 import Login from "@/views/Login.vue";
-import RegisterUser from "@/views/RegisterUser.vue";
 import Home from "@/views/Home.vue";
 import {useUserStore} from "@/stores/userStore";
+import LandingView from "@/views/LandingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'landing',
+      component:LandingView
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
-    },
-    {
-      path: '/users/register',
-      name: 'users_register',
-      component: RegisterUser
     },
     {
       path: '/home',

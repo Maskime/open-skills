@@ -23,10 +23,14 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
-    first_name = db.Column(db.String, nullable=False)
+    first_name = db.Column(db.String)
+    name = db.Column(db.String)
     password = db.Column(db.String, nullable=False)
+    entreprise = db.Column(db.String)
+    email_consent = db.Column(db.Boolean, default=False, nullable=False)
 
     experiences = db.relationship('Experience', lazy=True)
+    transcriptions = db.relationship('TranscriptionTask', lazy=True)
     technologies = db.relationship('Technology', secondary=user_technology, lazy='subquery')
 
     def __init__(self, email, password) -> None:
@@ -84,3 +88,25 @@ class Experience(db.Model):
     end_date = db.Column(db.Date, nullable=False)
     is_current_position = db.Column(db.Boolean, nullable=False)
     tasks = db.relationship('Task', lazy=True)
+
+
+class TranscriptionTask(db.Model):
+    __tablename__ = 'transcription_tasks'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    path = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, nullable=False)
+    transcription = db.Column(db.String)
+    created_at = db.Column(db.DateTime, nullable=False)
+    updated_at = db.Column(db.DateTime)
+
+    @classmethod
+    def update_status(cls, orig_task: 'TranscriptionTask', new_status: str):
+        db_task: TranscriptionTask = cls.query.filter_by(id=orig_task.id).first()
+        if not db_task:
+            return None
+        db_task.status = new_status
+        db.session.commit()
+        return db_task

@@ -9,6 +9,8 @@ class RequestUserCreate:
         self.first_name = ''
         self.email = ''
         self.password = ''
+        self.enterprise = ''
+        self.email_consent = False
 
 
 class RequestUserAuthenticate:

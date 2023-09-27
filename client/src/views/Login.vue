@@ -23,6 +23,8 @@ interface UserRegisterForm {
   firstName: string;
   email: string;
   password: string;
+  enterprise: string;
+  emailConsent: boolean;
 }
 
 const loginForm: Ref<LoginForm> = ref({
@@ -35,7 +37,9 @@ const registerForm: Ref<UserRegisterForm> = ref({
   name: '',
   firstName: '',
   email: '',
-  password: ''
+  password: '',
+  enterprise: '',
+  emailConsent: false
 });
 
 const registerClose = ref(null);
@@ -50,7 +54,8 @@ function handleLogin() {
 }
 
 function handleLoginSuccess(response: RegisterResponse) {
-  toast('Successful login, redirecting.', {
+
+  toast('Authentification réussie, redirection en cours.', {
     onClose: () => {
       router.push({name: 'home'});
     }
@@ -74,7 +79,9 @@ function handleRegister() {
     name: registerForm.value.name,
     firstName: registerForm.value.firstName,
     email: registerForm.value.email,
-    password: registerForm.value.password
+    password: registerForm.value.password,
+    enterprise: registerForm.value.enterprise,
+    emailConsent: registerForm.value.emailConsent
   };
   userStore.createUser(registerPayload, handleUserCreateSuccess, handleUserCreateFailed);
 
@@ -107,28 +114,21 @@ function handleClose() {
       <alert></alert>
       <form>
         <img class="mb-4" src="../assets/ptc.svg" alt="" height="57">
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <h1 class="h3 mb-3 fw-normal">Authentifiez vous</h1>
 
         <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+          <input type="email" class="form-control" id="floatingInput" placeholder="adresse@exemple.com"
                  v-model="loginForm.email">
-          <label for="floatingInput">Email address</label>
+          <label for="floatingInput">Adresse e-mail</label>
         </div>
         <div class="form-floating">
           <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
                  v-model="loginForm.password">
-          <label for="floatingPassword">Password</label>
+          <label for="floatingPassword">Mot de passe</label>
         </div>
-
-        <div class="form-check text-start my-3">
-          <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">
-            Remember me
-          </label>
-        </div>
-        <button class="btn btn-primary w-100 py-2" type="button" @click="handleLogin">Sign in</button>
+        <button class="btn btn-primary w-100 py-2" type="button" @click="handleLogin">Connexion</button>
         <p class="mt-5 mb-3 text-body-secondary">
-          <a href="#" data-bs-toggle="modal" data-bs-target="#modalSignin">Register</a>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#modalSignin">Inscription</a>
         </p>
       </form>
     </main>
@@ -139,7 +139,7 @@ function handleClose() {
     <div class="modal-dialog" role="document">
       <div class="modal-content rounded-4 shadow">
         <div class="modal-header p-5 pb-4 border-bottom-0">
-          <h1 class="fw-bold mb-0 fs-2">Sign up for free</h1>
+          <h1 class="fw-bold mb-0 fs-2">Inscription !</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                   ref="registerClose" @click="handleClose"></button>
         </div>
@@ -148,27 +148,43 @@ function handleClose() {
             <alert></alert>
             <div class="form-floating mb-3">
               <input v-model="registerForm.email" type="email" class="form-control rounded-3" id="floatingInput"
-                     placeholder="name@example.com">
-              <label for="floatingInput">Email address</label>
+                     placeholder="adresse@exemple.com">
+              <label for="floatingInput">Adresse e-mail</label>
             </div>
             <div class="form-floating mb-3">
               <input v-model="registerForm.firstName" type="text" class="form-control rounded-3" id="floatingInput"
-                     placeholder="Your first name">
-              <label for="floatingInput">First name</label>
+                     placeholder="Votre prénom">
+              <label for="floatingInput">Prénom</label>
             </div>
             <div class="form-floating mb-3">
               <input v-model="registerForm.name" type="text" class="form-control rounded-3" id="floatingInput"
-                     placeholder="Your name">
-              <label for="floatingInput">Name</label>
+                     placeholder="Votre nom">
+              <label for="floatingInput">Nom</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input v-model="registerForm.enterprise" type="text" class="form-control rounded-3" id="floatingInput"
+                     placeholder="Votre entreprise">
+              <label for="floatingInput">Entreprise</label>
             </div>
             <div class="form-floating mb-3">
               <input v-model="registerForm.password" type="password" class="form-control rounded-3"
                      id="floatingPassword" placeholder="Password">
               <label for="floatingPassword">Password</label>
             </div>
-            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button" @click="handleRegister">Sign up
+            <div class="form-floating mb-3 form-check">
+              <input class="form-check-input"
+                     type="checkbox"
+                     v-model="registerForm.emailConsent"
+                     true-value="true"
+                     false-value="false"
+                     id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault" style="padding-top:0;padding-left:20px;">
+                <small>J'autorise la PTC à me contacter dans un but commercial.</small>
+              </label>
+            </div>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button" @click="handleRegister">
+              S'enregistrer
             </button>
-            <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
           </form>
         </div>
       </div>
